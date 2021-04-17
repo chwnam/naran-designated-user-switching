@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Naran Designated User Switching
  * Description: Preset your frequent user switching list and do it in one click.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Changwoo
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/naran-designated-user-switching
@@ -10,7 +10,7 @@
  */
 
 const NDUS_MAIN    = __FILE__;
-const NDUS_VERSION = '1.0.0';
+const NDUS_VERSION = '1.0.1';
 
 if ( ! function_exists( 'ndus_init' ) ) {
 	add_action( 'plugins_loaded', 'ndus_init' );
@@ -198,7 +198,7 @@ if ( ! function_exists( 'ndus_get_default_settings' ) ) {
 	}
 }
 
-if ( ! function_exists( '' ) ) {
+if ( ! function_exists( 'ndus_admin_bar_menu' ) ) {
 	/**
 	 * Add admin bar menu.
 	 *
@@ -275,6 +275,9 @@ if ( ! function_exists( '' ) ) {
 
 
 if ( ! function_exists( 'ndus_response_user_search' ) ) {
+	/**
+	 * AJAX Callback: user searching.
+	 */
 	function ndus_response_user_search() {
 		check_ajax_referer( 'ndus-quick-search-search', 'nonce' );
 
@@ -305,6 +308,9 @@ if ( ! function_exists( 'ndus_response_user_search' ) ) {
 }
 
 if ( ! function_exists( 'ndus_response_user_switch' ) ) {
+	/**
+	 * AJAX Callback: user switching.
+	 */
 	function ndus_response_user_switch() {
 		check_ajax_referer( 'ndus-quick-search-switch', 'nonce' );
 		if ( current_user_can( 'administrator' ) && ( $user_login = sanitize_user( $_REQUEST['user_login'] ) ) ) {
