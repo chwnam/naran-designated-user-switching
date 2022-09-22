@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Naran Designated User Switching
  * Description: Preset your frequent user switching list and do it in one click.
- * Version:     1.0.1
+ * Version:     1.0.2
  * Author:      Changwoo
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/naran-designated-user-switching
@@ -113,9 +113,8 @@ if ( ! function_exists( 'ndus_user_update' ) ) {
 	 * @used-by ndus_init
 	 */
 	function ndus_user_update( int $user_id ) {
-		check_admin_referer( 'ndus', '_ndus_nonce' );
-
-		if ( user_can( $user_id, 'administrator' ) ) {
+		if ( isset( $_POST['ndus'] ) && user_can( $user_id, 'administrator' ) ) {
+			check_admin_referer( 'ndus', '_ndus_nonce' );
 			update_user_meta( $user_id, 'ndus_settings', $_POST['ndus_settings'] ?? [] );
 		}
 	}
@@ -192,7 +191,7 @@ if ( ! function_exists( 'ndus_get_default_settings' ) ) {
 	 */
 	function ndus_get_default_settings(): array {
 		return [
-			'user_preset'  => [],
+			'user_preset'  => '',
 			'quick_search' => false,
 		];
 	}
@@ -214,7 +213,7 @@ if ( ! function_exists( 'ndus_admin_bar_menu' ) ) {
 		$user_query = new WP_User_Query(
 			[
 				'count_total' => false,
-				'login__in'   => $user_preset
+				'login__in'   => $user_preset,
 			]
 		);
 
@@ -229,7 +228,7 @@ if ( ! function_exists( 'ndus_admin_bar_menu' ) ) {
 						'parent' => 'user-actions',
 						'id'     => 'switch-to-' . $user->user_login,
 						'title'  => 'Switch to ' . $user->user_login,
-						'href'   => user_switching::switch_to_url( $user )
+						'href'   => user_switching::switch_to_url( $user ),
 					]
 				);
 			}
@@ -264,7 +263,7 @@ if ( ! function_exists( 'ndus_admin_bar_menu' ) ) {
 					'nonce'   => [
 						'search' => wp_create_nonce( 'ndus-quick-search-search' ),
 						'switch' => wp_create_nonce( 'ndus-quick-search-switch' ),
-					]
+					],
 				]
 			);
 
