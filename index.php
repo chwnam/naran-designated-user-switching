@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Naran Designated User Switching
  * Description: Preset your frequent user switching list and do it in one click.
- * Version:     1.0.2
+ * Version:     1.0.3
  * Author:      Changwoo
  * Author URI:  https://blog.changwoo.pe.kr
  * Plugin URI:  https://github.com/chwnam/naran-designated-user-switching
@@ -10,7 +10,7 @@
  */
 
 const NDUS_MAIN    = __FILE__;
-const NDUS_VERSION = '1.0.1';
+const NDUS_VERSION = '1.0.3';
 
 if ( ! function_exists( 'ndus_init' ) ) {
 	add_action( 'plugins_loaded', 'ndus_init' );
@@ -113,8 +113,11 @@ if ( ! function_exists( 'ndus_user_update' ) ) {
 	 * @used-by ndus_init
 	 */
 	function ndus_user_update( int $user_id ) {
-		if ( isset( $_POST['ndus'] ) && user_can( $user_id, 'administrator' ) ) {
-			check_admin_referer( 'ndus', '_ndus_nonce' );
+		if (
+			wp_verify_nonce( $_REQUEST['_ndus_nonce'] ?? '', 'ndus' ) &&
+			user_can( $user_id, 'administrator' ) &&
+			isset( $_POST['ndus_settings'] )
+		) {
 			update_user_meta( $user_id, 'ndus_settings', $_POST['ndus_settings'] ?? [] );
 		}
 	}
